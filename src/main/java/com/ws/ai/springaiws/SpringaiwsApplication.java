@@ -16,6 +16,7 @@ public class SpringaiwsApplication {
         System.setProperty("proxyHost",proxyHost);
         System.setProperty("proxySet","true");
         */
+
         SpringApplication.run(SpringaiwsApplication.class, args);
     }
 

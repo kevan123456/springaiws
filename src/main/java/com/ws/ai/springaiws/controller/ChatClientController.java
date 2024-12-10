@@ -1,6 +1,7 @@
 package com.ws.ai.springaiws.controller;
 
-import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.ai.audio.transcription.AudioTranscriptionPrompt;
+import org.springframework.ai.audio.transcription.AudioTranscriptionResponse;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -13,6 +14,7 @@ import org.springframework.ai.openai.api.OpenAiImageApi;
 import org.springframework.ai.openai.audio.speech.SpeechPrompt;
 import org.springframework.ai.openai.audio.speech.SpeechResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,6 +43,8 @@ public class ChatClientController {
     private OpenAiImageModel openAiImageModel;
     @Autowired
     private OpenAiAudioSpeechModel openAiAudioSpeechModel ;
+    @Autowired
+    private OpenAiAudioTranscriptionModel openAiAudioTranscriptionModel ;
 
     @GetMapping("/chat")
     public String generation(@RequestParam(value = "message",defaultValue = "给我讲个笑话") String message) {
@@ -139,6 +143,27 @@ public class ChatClientController {
         FileOutputStream fos = new FileOutputStream(dir+"/wangshun.mp3") ;
         fos.write(body);
         fos.close();
+    }
+
+
+    /**
+     *  语音转文字/翻译
+     * @param message
+     * @return
+     */
+    @GetMapping("/audio2text")
+    public String audio2text(@RequestParam(value = "message",defaultValue = "/wangshun.mp3") String message) {
+
+        OpenAiAudioTranscriptionOptions transcriptionOptions = OpenAiAudioTranscriptionOptions.builder()
+                .withResponseFormat(OpenAiAudioApi.TranscriptResponseFormat.TEXT)
+                .withTemperature(0f)
+                .build();
+        String dir = System.getProperty("user.dir") ;
+        FileSystemResource audioFile = new FileSystemResource(dir+message);
+
+        AudioTranscriptionPrompt transcriptionRequest = new AudioTranscriptionPrompt(audioFile, transcriptionOptions);
+        AudioTranscriptionResponse response = openAiAudioTranscriptionModel.call(transcriptionRequest);
+        return response.getResult().getOutput() ;
     }
 }
 

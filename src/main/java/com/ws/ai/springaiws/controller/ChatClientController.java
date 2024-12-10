@@ -3,18 +3,23 @@ package com.ws.ai.springaiws.controller;
 import org.springframework.ai.audio.transcription.AudioTranscriptionPrompt;
 import org.springframework.ai.audio.transcription.AudioTranscriptionResponse;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.image.ImageResponse;
+import org.springframework.ai.model.Media;
 import org.springframework.ai.openai.*;
+import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.openai.api.OpenAiAudioApi;
 import org.springframework.ai.openai.api.OpenAiImageApi;
 import org.springframework.ai.openai.audio.speech.SpeechPrompt;
 import org.springframework.ai.openai.audio.speech.SpeechResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 import java.io.FileOutputStream;
+import java.util.List;
 
 /**
  * @author yunhua
@@ -164,6 +170,24 @@ public class ChatClientController {
         AudioTranscriptionPrompt transcriptionRequest = new AudioTranscriptionPrompt(audioFile, transcriptionOptions);
         AudioTranscriptionResponse response = openAiAudioTranscriptionModel.call(transcriptionRequest);
         return response.getResult().getOutput() ;
+    }
+
+
+    /**
+     * 多模态
+     * @param message
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/multimodality")
+    public String multimodality(@RequestParam(value = "message",defaultValue = "从图片中看到了什么？") String message) throws Exception{
+        ClassPathResource imageData = new ClassPathResource("/test.png") ;
+        UserMessage userMessage = new UserMessage(message,
+                List.of(new Media(MimeTypeUtils.IMAGE_PNG,imageData)));
+
+        ChatResponse response = chatModel.call(new Prompt(userMessage,
+                OpenAiChatOptions.builder().withModel(OpenAiApi.ChatModel.GPT_4_O.getValue()).build()));
+        return response.getResult().getOutput().getContent() ;
     }
 }
 

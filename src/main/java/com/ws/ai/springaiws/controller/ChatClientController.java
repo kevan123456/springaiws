@@ -66,6 +66,7 @@ public class ChatClientController {
 
     /**
      * 流方式返回需要编码
+     * https://docs.spring.io/spring-ai/reference/1.0/api/chatclient.html#_stream_return_values
      * @param message
      * @return
      */
@@ -82,6 +83,7 @@ public class ChatClientController {
 
     /**
      * chatModel是大模型独有的功能定制化配置。chatClient都是通用的，底层封装chatModel
+     * https://docs.spring.io/spring-ai/reference/1.0/api/chat/openai-chat.html
      * @param message
      * @return
      */
@@ -100,6 +102,7 @@ public class ChatClientController {
 
     /**
      * 文字转图片
+     * https://docs.spring.io/spring-ai/reference/1.0/api/image/openai-image.html
      * @param message
      * @return
      */
@@ -121,6 +124,7 @@ public class ChatClientController {
 
     /**
      * 文字转语音
+     * https://docs.spring.io/spring-ai/reference/1.0/api/audio/speech/openai-speech.html
      * @param message
      * @return
      */
@@ -154,6 +158,7 @@ public class ChatClientController {
 
     /**
      *  语音转文字/翻译
+     *  https://docs.spring.io/spring-ai/reference/1.0/api/audio/transcriptions/openai-transcriptions.html
      * @param message
      * @return
      */
@@ -175,6 +180,7 @@ public class ChatClientController {
 
     /**
      * 多模态
+     * https://docs.spring.io/spring-ai/reference/1.0/api/chat/openai-chat.html#_multimodal
      * @param message
      * @return
      * @throws Exception
